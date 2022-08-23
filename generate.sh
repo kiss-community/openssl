@@ -20,6 +20,11 @@ export CXX=g++
 export CFLAGS="-march=x86-64 -mtune=generic -pipe -Os"
 export CXXFLAGS="$CFLAGS"
 
+sed -i \
+    -e '/util\/write-man-symlinks/d' \
+    -e 's|@$(PERL) $(SRCDIR)/util/mkdir-p.pl|@-mkdir -p|' \
+    Configurations/unix-Makefile.tmpl
+
 find . -type f > "$ORIGINAL_LIST"
 
 ./Configure \
