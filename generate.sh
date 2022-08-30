@@ -8,17 +8,17 @@ OPENSSL_SRC="https://www.openssl.org/source/openssl-$OPENSSL_VERSION.tar.gz"
 OUTDIR="$PWD/output"
 ORIGINAL_LIST="$OUTDIR/original_list"
 
+TMPDIR="$(mktemp -d)"
+
 mkdir -p "$OUTDIR"
-cd "$OUTDIR"
+
+cd "$TMPDIR"
 
 curl -L "$OPENSSL_SRC" | tar xfz -
-
 cd "openssl-$OPENSSL_VERSION"
 
-export CC=gcc
-export CXX=g++
-export CFLAGS="-march=x86-64 -mtune=generic -pipe -Os"
-export CXXFLAGS="$CFLAGS"
+# Make the generated Makefile use host toolchain
+patch -p1 < "$OUTDIR/../host-toolchain.patch"
 
 sed -i \
     -e '/util\/write-man-symlinks/d' \
@@ -27,7 +27,7 @@ sed -i \
 
 find . -type f > "$ORIGINAL_LIST"
 
-./Configure \
+env -i PATH=/usr/bin ./Configure \
     --prefix=/usr \
     --openssldir=/etc/ssl \
     --libdir=lib \
@@ -36,7 +36,7 @@ find . -type f > "$ORIGINAL_LIST"
     shared \
     linux-x86_64
 
-make build_all_generated
+env -i PATH=/usr/bin make build_all_generated -j"$(nproc)"
 
 while read -r file; do
     rm -f "$file"
@@ -47,5 +47,4 @@ rm "$ORIGINAL_LIST"
 tar c . | gzip > "$OUTDIR/openssl-$OPENSSL_VERSION-generated.tar.gz"
 
 cd "$OUTDIR"
-
-rm -rf "openssl-$OPENSSL_VERSION"
+rm -rf "$TMPDIR"

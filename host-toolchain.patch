@@ -1,0 +1,79 @@
+diff --git a/Configurations/10-main.conf b/Configurations/10-main.conf
+index 66bc81d..b2bbaca 100644
+--- a/Configurations/10-main.conf
++++ b/Configurations/10-main.conf
+@@ -177,15 +177,15 @@ my %targets = (
+     "gcc" => {
+         inherit_from     => [ "BASE_unix" ],
+         CC               => "gcc",
+-        CFLAGS           => picker(debug   => "-O0 -g",
+-                                   release => "-O3"),
++        CFLAGS           => picker(debug   => "",
++                                   release => ""),
+         thread_scheme    => "(unknown)",
+         bn_ops           => "BN_LLONG",
+     },
+     "cc" => {
+         inherit_from     => [ "BASE_unix" ],
+         CC               => "cc",
+-        CFLAGS           => "-O",
++        CFLAGS           => "",
+         thread_scheme    => "(unknown)",
+     },
+ 
+@@ -681,12 +681,12 @@ my %targets = (
+         inherit_from     => [ "BASE_unix" ],
+         CC               => "gcc",
+         CXX              => "g++",
+-        CFLAGS           => picker(default => "-Wall",
+-                                   debug   => "-O0 -g",
+-                                   release => "-O3"),
+-        CXXFLAGS         => picker(default => "-Wall",
+-                                   debug   => "-O0 -g",
+-                                   release => "-O3"),
++        CFLAGS           => picker(default => "",
++                                   debug   => "",
++                                   release => ""),
++        CXXFLAGS         => picker(default => "",
++                                   debug   => "",
++                                   release => ""),
+         cflags           => threads("-pthread"),
+         cxxflags         => combine("-std=c++11", threads("-pthread")),
+         lib_cppflags     => "-DOPENSSL_USE_NODELETE",
+diff --git a/Configurations/unix-Makefile.tmpl b/Configurations/unix-Makefile.tmpl
+index 110ba06..f879384 100644
+--- a/Configurations/unix-Makefile.tmpl
++++ b/Configurations/unix-Makefile.tmpl
+@@ -334,26 +334,22 @@ ECHO = echo
+ # ASFLAGS for this reason.
+ 
+ CROSS_COMPILE={- $config{CROSS_COMPILE} -}
+-CC=$(CROSS_COMPILE){- $config{CC} -}
+-CXX={- $config{CXX} ? "\$(CROSS_COMPILE)$config{CXX}" : '' -}
+-CPPFLAGS={- our $cppflags1 = join(" ",
++CPPFLAGS+={- our $cppflags1 = join(" ",
+                                   (map { "-D".$_} @{$config{CPPDEFINES}}),
+                                   (map { "-I".$_} @{$config{CPPINCLUDES}}),
+                                   @{$config{CPPFLAGS}}) -}
+-CFLAGS={- join(' ', @{$config{CFLAGS}}) -}
+-CXXFLAGS={- join(' ', @{$config{CXXFLAGS}}) -}
+-LDFLAGS= {- join(' ', @{$config{LDFLAGS}}) -}
++CFLAGS+={- join(' ', @{$config{CFLAGS}}) -}
++CXXFLAGS+={- join(' ', @{$config{CXXFLAGS}}) -}
++LDFLAGS+= {- join(' ', @{$config{LDFLAGS}}) -}
+ EX_LIBS= {- join(' ', @{$config{LDLIBS}}) -}
+ 
+ MAKEDEPEND={- $config{makedepcmd} -}
+ 
+ PERL={- $config{PERL} -}
+ 
+-AR=$(CROSS_COMPILE){- $config{AR} -}
+ ARFLAGS= {- join(' ', @{$config{ARFLAGS}}) -}
+-RANLIB={- $config{RANLIB} ? "\$(CROSS_COMPILE)$config{RANLIB}" : "true"; -}
+-RC= $(CROSS_COMPILE){- $config{RC} -}
+-RCFLAGS={- join(' ', @{$config{RCFLAGS}}) -} {- $target{shared_rcflag} -}
++RANLIB=$(AR) s
++RCFLAGS+={- join(' ', @{$config{RCFLAGS}}) -} {- $target{shared_rcflag} -}
+ 
+ RM= rm -f
+ RMDIR= rmdir
