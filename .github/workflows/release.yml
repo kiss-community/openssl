@@ -1,0 +1,31 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  VERSION: 3.0.5
+  SHA256: aa7d8d9bef71ad6525c55ba11e5f4397889ce49c2c9349dcea6d3e4f0b024a7a
+
+jobs:
+  build:
+    name: Generate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Build
+        run: ./generate.sh "$VERSION" "$SHA256"
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          body: "Generated"
+          draft: false
+          name: "Generated"
+          tag_name: generated
+          files: openssl-3.0.5-generated.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
