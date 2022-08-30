@@ -2,7 +2,7 @@
 
 set -eu
 
-OPENSSL_VERSION=3.0.5
+OPENSSL_VERSION="$1"
 OPENSSL_SRC="https://www.openssl.org/source/openssl-$OPENSSL_VERSION.tar.gz"
 
 OUTDIR="$PWD/output"
@@ -14,7 +14,18 @@ mkdir -p "$OUTDIR"
 
 cd "$TMPDIR"
 
-curl -L "$OPENSSL_SRC" | tar xfz -
+curl -L "$OPENSSL_SRC" > out.tar.gz
+
+SHA256="$(sha256sum out.tar.gz | awk '{print $1}')"
+
+[ "$SHA256" = "$2" ] || {
+    echo "sha256 '$SHA256' != '$2'"
+    exit 1
+}
+
+tar xf out.tar.gz
+rm out.tar.gz
+
 cd "openssl-$OPENSSL_VERSION"
 
 # Make the generated Makefile use host toolchain
