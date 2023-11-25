@@ -36,7 +36,7 @@ sed -i \
     -e 's|@$(PERL) $(SRCDIR)/util/mkdir-p.pl|@-mkdir -p|' \
     Configurations/unix-Makefile.tmpl
 
-find . -type f > "$ORIGINAL_LIST"
+find . -type f ! \( -name libcrypto.num -o -name libssl.num \) > "$ORIGINAL_LIST"
 
 env -i PATH=/usr/bin ./Configure \
     --prefix=/usr \
