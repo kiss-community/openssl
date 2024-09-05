@@ -3,7 +3,7 @@
 set -eu
 
 OPENSSL_VERSION="$1"
-OPENSSL_SRC="https://www.openssl.org/source/openssl-$OPENSSL_VERSION.tar.gz"
+OPENSSL_SRC="https://github.com/openssl/openssl/releases/download/openssl-${OPENSSL_VERSION}/openssl-${OPENSSL_VERSION}.tar.gz"
 
 OUTDIR="$PWD/output"
 ORIGINAL_LIST="$OUTDIR/original_list"
