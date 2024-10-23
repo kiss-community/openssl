@@ -1,8 +1,8 @@
 diff --git a/Configurations/10-main.conf b/Configurations/10-main.conf
-index 66bc81d..b2bbaca 100644
+index cba57b4..d6c76a0 100644
 --- a/Configurations/10-main.conf
 +++ b/Configurations/10-main.conf
-@@ -177,15 +177,15 @@ my %targets = (
+@@ -180,15 +180,15 @@ my %targets = (
      "gcc" => {
          inherit_from     => [ "BASE_unix" ],
          CC               => "gcc",
@@ -21,7 +21,7 @@ index 66bc81d..b2bbaca 100644
          thread_scheme    => "(unknown)",
      },
  
-@@ -681,12 +681,12 @@ my %targets = (
+@@ -677,12 +677,12 @@ my %targets = (
          inherit_from     => [ "BASE_unix" ],
          CC               => "gcc",
          CXX              => "g++",
@@ -41,10 +41,10 @@ index 66bc81d..b2bbaca 100644
          cxxflags         => combine("-std=c++11", threads("-pthread")),
          lib_cppflags     => "-DOPENSSL_USE_NODELETE",
 diff --git a/Configurations/unix-Makefile.tmpl b/Configurations/unix-Makefile.tmpl
-index 110ba06..f879384 100644
+index 09303c4..beaaecb 100644
 --- a/Configurations/unix-Makefile.tmpl
 +++ b/Configurations/unix-Makefile.tmpl
-@@ -334,26 +334,22 @@ ECHO = echo
+@@ -363,15 +363,13 @@ ECHO = echo
  # ASFLAGS for this reason.
  
  CROSS_COMPILE={- $config{CROSS_COMPILE} -}
@@ -62,8 +62,9 @@ index 110ba06..f879384 100644
 +CXXFLAGS+={- join(' ', @{$config{CXXFLAGS}}) -}
 +LDFLAGS+= {- join(' ', @{$config{LDFLAGS}}) -}
  EX_LIBS= {- join(' ', @{$config{LDLIBS}}) -}
+ OBJCOPY={- $config{OBJCOPY} -}
  
- MAKEDEPEND={- $config{makedepcmd} -}
+@@ -379,11 +377,9 @@ MAKEDEPEND={- $config{makedepcmd} -}
  
  PERL={- $config{PERL} -}
  
