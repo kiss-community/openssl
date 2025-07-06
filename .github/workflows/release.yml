@@ -7,8 +7,8 @@ on:
   workflow_dispatch:
 
 env:
-  VERSION: 3.5.0
-  SHA256: 344d0a79f1a9b08029b0744e2cc401a43f9c90acd1044d09a530b4885a8e9fc0
+  VERSION: 3.5.1
+  SHA256: 529043b15cffa5f36077a4d0af83f3de399807181d607441d734196d889b641f
 
 jobs:
   build:
@@ -29,6 +29,6 @@ jobs:
           draft: false
           name: "Generated"
           tag_name: generated
-          files: output/openssl-3.5.0-generated.tar.gz
+          files: output/openssl-3.5.1-generated.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
